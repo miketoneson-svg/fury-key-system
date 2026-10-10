@@ -7,7 +7,7 @@ import discord
 
 
 async def ensure_key_tables(db_name: str):
-    """Create the redeem_keys table if it doesn't exist"""
+    """Create the redeem_keys table if it doesn't exist."""
     async with aiosqlite.connect(db_name) as db:
         await db.execute(
             """
@@ -26,15 +26,13 @@ async def ensure_key_tables(db_name: str):
 
 
 def generate_key(length: int = 12) -> str:
-    """Generate a random uppercase alphanumeric key"""
+    """Generate a random uppercase alphanumeric key."""
     alphabet = string.ascii_uppercase + string.digits
     return "".join(secrets.choice(alphabet) for _ in range(length))
 
 
 async def create_keys_for_duration(db_name: str, duration: str, amount: int, created_by: int, parse_duration):
-    """
-    Generate redemption keys for a specific duration.
-    """
+    """Generate and store redemption keys for a duration."""
     seconds = parse_duration(duration)
     if not seconds:
         raise ValueError("Invalid duration")
@@ -67,7 +65,7 @@ async def create_keys_for_duration(db_name: str, duration: str, amount: int, cre
 
 
 async def redeem_key_for_user(db_name: str, user_id: int, key: str, premium_role_id: int, guild):
-    """Redeem a key and grant premium access."""
+    """Redeem a key and grant premium access to a user."""
     code = key.strip().upper()
 
     async with aiosqlite.connect(db_name) as db:
@@ -208,7 +206,7 @@ def register_key_commands(bot, tree, db_name, is_admin_check, make_embed, parse_
             return await interaction.response.send_message("No keys have been generated yet.")
 
         lines = [
-            f"`{row[0]}` | `{row[1]}s ({row[1] // 86400}d)` | {'✅ used' if row[2] else '❌ unused'}"
+            f"`{row[0]}` | `{row[1]}s` | {'✅ used' if row[2] else '❌ unused'}"
             for row in rows
         ]
 

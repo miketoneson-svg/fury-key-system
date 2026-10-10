@@ -5,21 +5,17 @@ A premium key generation and redemption system for Discord bots.
 ## Features
 - Generate premium keys with `/keygen`
 - Redeem keys with `/redeem`
-- Mark keys as one-time use
-- Add premium role automatically on redemption
-- Track key creation and redemption status
-- Simple SQLite database design
+- One-time use validation
+- Premium role assignment on redemption
+- SQLite tracking for keys and subscription expiry
 
-## Installation
+## Install
 
 ```bash
 pip install discord.py aiosqlite
 ```
 
-## Quick start
-
-1. Copy `key_system.py` into your bot project.
-2. Ensure your bot has a `users` table:
+## Required database table
 
 ```sql
 CREATE TABLE IF NOT EXISTS users (
@@ -28,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 ```
 
-3. In your bot setup, call:
+## Quick start
 
 ```python
 from key_system import ensure_key_tables, register_key_commands
@@ -42,17 +38,16 @@ register_key_commands(
     is_admin,
     make_embed,
     parse_duration,
-    PREMIUM_ROLE_ID
+    PREMIUM_ROLE_ID,
 )
 ```
 
 ## Commands
+- `/keygen <duration> [amount]` - create new keys
+- `/redeem <key>` - redeem a key
+- `/keys` - view recent keys
 
-- `/keygen <duration> [amount]`
-- `/redeem <key>`
-- `/keys`
-
-## Durations
+## Supported durations
 - `1day`
 - `3days`
 - `7days`
@@ -60,7 +55,7 @@ register_key_commands(
 - `1month`
 - `1year`
 
-## Example duration parser
+## Example parser
 
 ```python
 def parse_duration(duration):
@@ -76,6 +71,10 @@ def parse_duration(duration):
     return values.get(duration)
 ```
 
-## License
+## Notes
+- Keys are random uppercase alphanumeric strings.
+- Keys are single-use and cannot be reused.
+- Redeeming a key adds time to the user's existing premium expiry if present.
 
+## License
 MIT
