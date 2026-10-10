@@ -1,0 +1,81 @@
+# Fury Key System
+
+A premium key generation and redemption system for Discord bots.
+
+## Features
+- Generate premium keys with `/keygen`
+- Redeem keys with `/redeem`
+- Mark keys as one-time use
+- Add premium role automatically on redemption
+- Track key creation and redemption status
+- Simple SQLite database design
+
+## Installation
+
+```bash
+pip install discord.py aiosqlite
+```
+
+## Quick start
+
+1. Copy `key_system.py` into your bot project.
+2. Ensure your bot has a `users` table:
+
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY,
+    expires_at INTEGER
+);
+```
+
+3. In your bot setup, call:
+
+```python
+from key_system import ensure_key_tables, register_key_commands
+
+await ensure_key_tables("database.db")
+
+register_key_commands(
+    bot,
+    tree,
+    "database.db",
+    is_admin,
+    make_embed,
+    parse_duration,
+    PREMIUM_ROLE_ID
+)
+```
+
+## Commands
+
+- `/keygen <duration> [amount]`
+- `/redeem <key>`
+- `/keys`
+
+## Durations
+- `1day`
+- `3days`
+- `7days`
+- `3weeks`
+- `1month`
+- `1year`
+
+## Example duration parser
+
+```python
+def parse_duration(duration):
+    duration = duration.strip().lower()
+    values = {
+        "1day": 86400,
+        "3days": 259200,
+        "7days": 604800,
+        "3weeks": 1814400,
+        "1month": 2592000,
+        "1year": 31536000,
+    }
+    return values.get(duration)
+```
+
+## License
+
+MIT
